@@ -51,7 +51,11 @@
         if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-    items.forEach(function (el) { io.observe(el); });
+    items.forEach(function (el) {
+      // Anything already on screen at load shows immediately; the rest reveal on scroll
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.92) el.classList.add('in');
+      else io.observe(el);
+    });
   }
 
   // Card spotlight (fine pointers only)
