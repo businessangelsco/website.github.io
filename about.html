@@ -23,14 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
 <link rel="stylesheet" href="css/site.css">
-<script>document.documentElement.className+=" js";</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-C58RKCTPWR"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-C58RKCTPWR');
-</script>
+<script>document.documentElement.className+=" js";setTimeout(function(){var d=document.documentElement;if(!d.classList.contains("ready"))d.classList.remove("js")},3000);</script>
 </head>
 <body>
 <div class="progress" aria-hidden="true"></div>
@@ -103,21 +96,13 @@ gtag('config', 'G-C58RKCTPWR');
 </address>
 </div>
 </div>
-<p class="legal">&copy; 2026 Business Angels Web Development Co. All rights reserved.</p>
+<p class="legal">&copy; 2026 Business Angels Web Development Co. All rights reserved. · <a href="privacy.html">Privacy</a> · <a href="#" data-consent-reset>Cookie settings</a></p>
 </div>
 </footer>
-<div id="fb-root"></div>
-<div class="fb-customerchat" attribution="setup_tool" page_id="1785302118448125" theme_color="#7ed957"></div>
-<script>
-window.fbAsyncInit = function() { FB.init({ xfbml: true, version: 'v10.0' }); };
-(function(d, s, id) {
-var js, fjs = d.getElementsByTagName(s)[0];
-if (d.getElementById(id)) return;
-js = d.createElement(s); js.id = id;
-js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
-fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-</script>
+<div class="consent" id="consent" role="dialog" aria-label="Cookies and privacy" hidden>
+<p>We'd like to use Google Analytics to understand how the site is used and a Facebook Messenger chat so you can message us. Both set cookies. <a href="privacy.html">Privacy notice</a></p>
+<div class="consent-actions"><button type="button" class="btn btn-outline" data-consent="no">Decline</button><button type="button" class="btn" data-consent="yes">Accept</button></div>
+</div>
 <script src="js/site.js" defer></script>
 </body>
 </html>

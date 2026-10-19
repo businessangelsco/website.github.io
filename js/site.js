@@ -1,4 +1,6 @@
 (function () {
+  var root = document.documentElement;
+  root.classList.add('ready');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var header = document.querySelector('.site-header');
   var bar = document.querySelector('.progress');
@@ -19,17 +21,13 @@
     });
   }
 
-  // Scroll progress, header shadow and blob parallax
-  var blobs = document.querySelectorAll('.hero .blob, .banner .blob');
+  // Scroll progress and header shadow
   var ticking = false;
   function onScroll() {
     var y = window.scrollY;
-    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var max = root.scrollHeight - window.innerHeight;
     if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? y / max : 0) + ')';
     if (header) header.classList.toggle('scrolled', y > 8);
-    if (!reduce && y < 1200) {
-      blobs.forEach(function (b, i) { b.style.translate = '0 ' + (y * (0.08 + i * 0.05)) + 'px'; });
-    }
     ticking = false;
   }
   window.addEventListener('scroll', function () {
@@ -56,21 +54,62 @@
     items.forEach(function (el) { io.observe(el); });
   }
 
-  // Card spotlight and 3D tilt (fine pointers only)
+  // Card spotlight (fine pointers only)
   if (!reduce && window.matchMedia('(hover: hover)').matches) {
     document.querySelectorAll('.card').forEach(function (card) {
       card.addEventListener('pointermove', function (e) {
         var r = card.getBoundingClientRect();
-        var x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-        card.style.setProperty('--mx', (x * 100) + '%');
-        card.style.setProperty('--my', (y * 100) + '%');
-        card.style.setProperty('--ry', ((x - 0.5) * 8) + 'deg');
-        card.style.setProperty('--rx', ((0.5 - y) * 8) + 'deg');
-      });
-      card.addEventListener('pointerleave', function () {
-        card.style.setProperty('--rx', '0deg');
-        card.style.setProperty('--ry', '0deg');
+        card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+        card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
       });
     });
   }
+
+  // Consent: Google Analytics and Messenger load only after Accept
+  var KEY = 'ba-consent';
+  var banner = document.getElementById('consent');
+  function get() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+
+  function loadAnalytics() {
+    if (window.__baGA) return; window.__baGA = true;
+    var s = document.createElement('script');
+    s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-C58RKCTPWR';
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', 'G-C58RKCTPWR');
+  }
+  function loadMessenger() {
+    if (window.__baFB) return; window.__baFB = true;
+    var root = document.createElement('div'); root.id = 'fb-root';
+    var chat = document.createElement('div');
+    chat.className = 'fb-customerchat';
+    chat.setAttribute('attribution', 'setup_tool');
+    chat.setAttribute('page_id', '1785302118448125');
+    chat.setAttribute('theme_color', '#7ed957');
+    document.body.appendChild(root); document.body.appendChild(chat);
+    window.fbAsyncInit = function () { FB.init({ xfbml: true, version: 'v10.0' }); };
+    var s = document.createElement('script');
+    s.async = true; s.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+    document.body.appendChild(s);
+  }
+  function apply() {
+    if (get() === 'yes') { loadAnalytics(); loadMessenger(); }
+  }
+  if (banner) {
+    if (!get()) banner.hidden = false;
+    banner.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-consent]');
+      if (!b) return;
+      set(b.getAttribute('data-consent'));
+      banner.hidden = true;
+      apply();
+    });
+    document.querySelectorAll('[data-consent-reset]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); banner.hidden = false; });
+    });
+  }
+  apply();
 })();
